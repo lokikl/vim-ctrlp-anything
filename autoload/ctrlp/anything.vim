@@ -31,6 +31,13 @@ endfunction
 " Return: a Vim's List
 "
 function! ctrlp#anything#init()
+  " dim the content part to make it look more tidy
+  " eg.
+  " app/data/mgmt.rb:31:     def abc
+  if !ctrlp#nosy()
+    cal ctrlp#hicheck('CtrlPTabExtra', 'Comment')
+    syntax match CtrlPTabExtra `:.*$`
+  en
   return split(system(s:word), "\n")
 endfunction
 
@@ -68,9 +75,10 @@ endfunction
 
 function! s:open_file(mode, str)
   if match(a:str, ':') != -1
-    let [path, line] = split(a:str, ':')
+    " let [path, line] = split(a:str, ':')
+    let [path, line, column; rest] = split(a:str, ':')
     call ctrlp#acceptfile(a:mode, path)
-    call cursor(line, 0)
+    call cursor(line, column)
   else
     call ctrlp#acceptfile(a:mode, a:str)
   endif
